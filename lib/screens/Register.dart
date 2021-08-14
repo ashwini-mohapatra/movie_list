@@ -1,47 +1,24 @@
-import 'package:dialog_context/dialog_context.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:movie_list/screens/Home.dart';
-import 'package:movie_list/screens/Register.dart';
+import 'package:movie_list/screens/Login.dart';
 
-class Login extends StatefulWidget{
+class Register extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _Login();
+    return _Register();
   }
-
 }
-class _Login extends State<Login>{
+class _Register extends State<Register>{
 
-  late var name,password;
-  FirebaseAuth auth = FirebaseAuth.instance;
   TextEditingController t1=TextEditingController();
   TextEditingController t2=TextEditingController();
+  late var name,password;
 
-
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
-  signin(name,pass) async{
+  register(name,pass) async{
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: name,
           password: pass
       );
@@ -51,12 +28,13 @@ class _Login extends State<Login>{
 
       }
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
       }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -87,7 +65,7 @@ class _Login extends State<Login>{
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Container(height: 25),
-                        Text("SIGN IN"),
+                        Text("SIGN UP"),
                         TextField(
                           controller: t1,
                           keyboardType: TextInputType.text,
@@ -133,18 +111,18 @@ class _Login extends State<Login>{
                                 name=t1.text;
                                 password=t2.text;
                               });
-                              signin(name, password);
+                              register(name,password);
                             },
                           ),
                         ),
                         Container(
                           width: double.infinity,
                           child: FlatButton(
-                            child: Text("New user? Sign Up",
+                            child: Text("Old user? Sign In",
                               style: TextStyle(color: Colors.indigoAccent),),
                             color: Colors.transparent,
                             onPressed: () {
-                              Register();
+                              Login();
                             },
                           ),
                         ),
