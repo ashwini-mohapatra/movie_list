@@ -48,14 +48,18 @@ class _DrawerNavigation extends State<DrawerNavigation>{
               title: Text("Home"),
               leading: Icon(Icons.home),
               onTap: (){
-                Navigator.of(context).push(new MaterialPageRoute(builder: (context)=> Home()));
+                Navigator.of(context).pop();
+                Home();
+                //Navigator.of(context).push(new MaterialPageRoute(builder: (context)=> Home()));
               },
             ),
             ListTile(
               title: Text("Logout"),
               leading: Icon(Icons.login),
               onTap: (){
-                _logout();
+                Navigator.of(context).pop();
+                Login();
+                //_logout();
                 },
             ),
           ],

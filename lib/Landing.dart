@@ -1,4 +1,3 @@
-import 'package:awesome_loader/awesome_loader.dart';
 import 'package:dialog_context/dialog_context.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_list/screens/Home.dart';
 import 'package:movie_list/screens/Login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Landing extends StatefulWidget{
 
@@ -18,9 +18,21 @@ class Landing extends StatefulWidget{
 
 class _Landing extends State<Landing>{
 
+
   bool _initialized = false;
   bool _error = false;
-  var ab=Landing();
+  late var uid;
+
+  storeUID(id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('uid', id);
+  }
+
+  getUID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    uid=prefs.getString('uid');
+  }
+
   // Define an async function to initialize FlutterFire
   void initializeFlutterFire() async {
     try {
@@ -63,7 +75,7 @@ class _Landing extends State<Landing>{
     // );
     // Show a loader until FlutterFire is initialized
     if (!_initialized) {
-      return AwesomeLoader();
+      return CircularProgressIndicator();
     }
     var f=0;
     FirebaseAuth.instance
@@ -71,8 +83,14 @@ class _Landing extends State<Landing>{
         .listen((User? user) {
       if (user == null) {
         f=0;
+        getUID();
+        if(uid==''){
+          f=0;
+        }
       } else {
         f=1;
+        uid=user.uid;
+        storeUID(uid);
       }
     });
     return (f==0)?Login():Home();

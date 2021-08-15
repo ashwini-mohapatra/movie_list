@@ -2,9 +2,14 @@ import 'package:dialog_context/dialog_context.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movie_list/screens/Home.dart';
 import 'package:movie_list/screens/Register.dart';
+import 'package:movie_list/services/GoogleSignInProvider.dart';
+import 'package:provider/provider.dart';
+
+import '../Landing.dart';
 
 class Login extends StatefulWidget{
   @override
@@ -22,22 +27,6 @@ class _Login extends State<Login>{
   TextEditingController t2=TextEditingController();
 
 
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
 
   signin(name,pass) async{
     try {
@@ -46,9 +35,15 @@ class _Login extends State<Login>{
           password: pass
       );
       if(userCredential==true){
-        Home();
+        Landing().storeUID(userCredential.user.uid);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
       }else{
-
+        DialogContext().showSnackBar(
+            snackBar: SnackBar(content: Text('SignIn Failed'))
+        );
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -149,19 +144,27 @@ class _Login extends State<Login>{
                               style: TextStyle(color: Colors.indigoAccent),),
                             color: Colors.transparent,
                             onPressed: () {
-                              Register();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Register()),
+                              );
                             },
                           ),
                         ),
                         Container(
                           width: double.infinity,
-                          child: FlatButton(
-                            child: Text("Google SignIn",
-                              style: TextStyle(color: Colors.white),),
-                            color: Colors.indigoAccent,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.indigoAccent,
+                              onPrimary: Colors.black,
+                              minimumSize: Size(double.infinity,50),
+                            ),
+                            icon: FaIcon(FontAwesomeIcons.google),
                             onPressed: () {
-                              signInWithGoogle();
+                              var provider=Provider.of<GoogleSignInProvider>(context,listen: false);
+                              provider.signInWithGoogle();
                             },
+                            label: Text('Signin with Google'),
                           ),
                         ),
                       ],

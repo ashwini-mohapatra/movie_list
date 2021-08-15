@@ -25,9 +25,14 @@ class _Register extends State<Register>{
           password: pass
       );
       if(userCredential==true){
-        Home();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
       }else{
-
+        DialogContext().showSnackBar(
+            snackBar: SnackBar(content: Text('Register Failure'))
+        );
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -130,7 +135,10 @@ class _Register extends State<Register>{
                               style: TextStyle(color: Colors.indigoAccent),),
                             color: Colors.transparent,
                             onPressed: () {
-                              Login();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Login()),
+                              );
                             },
                           ),
                         ),
