@@ -1,6 +1,8 @@
+import 'package:dialog_context/dialog_context.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_list/screens/Home.dart';
 import 'package:movie_list/screens/Login.dart';
 
 class Register extends StatefulWidget{
@@ -29,9 +31,15 @@ class _Register extends State<Register>{
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        DialogContext().showSnackBar(
+            snackBar: SnackBar(content: Text('The password provided is too weak'))
+        );
+        //print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        DialogContext().showSnackBar(
+            snackBar: SnackBar(content: Text('The account already exists for that email'))
+        );
+        //print('The account already exists for that email.');
       }
     } catch (e) {
       print(e);
@@ -69,7 +77,7 @@ class _Register extends State<Register>{
                         TextField(
                           controller: t1,
                           keyboardType: TextInputType.text,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(labelText: "Email",
                             labelStyle: TextStyle(color: Colors.blueGrey[400]),
                             enabledBorder: UnderlineInputBorder(
@@ -84,7 +92,7 @@ class _Register extends State<Register>{
                         TextField(
                           controller: t2,
                           keyboardType: TextInputType.text,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(labelText: "Password",
                             labelStyle: TextStyle(color: Colors.blueGrey[400]),
                             enabledBorder: UnderlineInputBorder(

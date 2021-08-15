@@ -52,10 +52,15 @@ class _Login extends State<Login>{
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-
-        print('No user found for that email.');
+        DialogContext().showSnackBar(
+            snackBar: SnackBar(content: Text('No user found for that email'))
+        );
+        //print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        DialogContext().showSnackBar(
+            snackBar: SnackBar(content: Text('Wrong password provided for that user'))
+        );
+        //print('Wrong password provided for that user.');
       }
     }
   }
@@ -91,7 +96,7 @@ class _Login extends State<Login>{
                         TextField(
                           controller: t1,
                           keyboardType: TextInputType.text,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(labelText: "Email",
                             labelStyle: TextStyle(color: Colors.blueGrey[400]),
                             enabledBorder: UnderlineInputBorder(
@@ -106,7 +111,7 @@ class _Login extends State<Login>{
                         TextField(
                           controller: t2,
                           keyboardType: TextInputType.text,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(labelText: "Password",
                             labelStyle: TextStyle(color: Colors.blueGrey[400]),
                             enabledBorder: UnderlineInputBorder(
@@ -145,6 +150,17 @@ class _Login extends State<Login>{
                             color: Colors.transparent,
                             onPressed: () {
                               Register();
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          child: FlatButton(
+                            child: Text("Google SignIn",
+                              style: TextStyle(color: Colors.white),),
+                            color: Colors.indigoAccent,
+                            onPressed: () {
+                              signInWithGoogle();
                             },
                           ),
                         ),

@@ -20,7 +20,7 @@ class _Landing extends State<Landing>{
 
   bool _initialized = false;
   bool _error = false;
-  late var ab;
+  var ab=Landing();
   // Define an async function to initialize FlutterFire
   void initializeFlutterFire() async {
     try {
@@ -65,16 +65,16 @@ class _Landing extends State<Landing>{
     if (!_initialized) {
       return AwesomeLoader();
     }
-
+    var f=0;
     FirebaseAuth.instance
         .authStateChanges()
         .listen((User? user) {
       if (user == null) {
-        ab=Login();
+        f=0;
       } else {
-        ab=Home();
+        f=1;
       }
     });
-    return ab;
+    return (f==0)?Login():Home();
   }
 }
