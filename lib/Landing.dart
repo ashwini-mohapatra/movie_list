@@ -23,12 +23,12 @@ class _Landing extends State<Landing>{
   bool _error = false;
   late var uid;
 
-  storeUID(id) async {
+  void storeUID(id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('uid', id);
+    await prefs.setString('uid', id);
   }
 
-  getUID() async {
+  void getUID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     uid=prefs.getString('uid');
   }

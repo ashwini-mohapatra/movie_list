@@ -8,6 +8,7 @@ import 'package:movie_list/screens/Home.dart';
 import 'package:movie_list/screens/Register.dart';
 import 'package:movie_list/services/GoogleSignInProvider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Landing.dart';
 
@@ -25,8 +26,17 @@ class _Login extends State<Login>{
   FirebaseAuth auth = FirebaseAuth.instance;
   TextEditingController t1=TextEditingController();
   TextEditingController t2=TextEditingController();
+  late var uid;
 
+  void storeUID(id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('uid', id);
+  }
 
+  void getUID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    uid=prefs.getString('uid');
+  }
 
   signin(name,pass) async{
     try {
@@ -35,26 +45,79 @@ class _Login extends State<Login>{
           password: pass
       );
       if(userCredential==true){
-        Landing().storeUID(userCredential.user.uid);
+        storeUID(userCredential.user?.uid);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Home()),
         );
       }else{
-        DialogContext().showSnackBar(
-            snackBar: SnackBar(content: Text('SignIn Failed'))
+
+        // show the dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("SignIN Failed"),
+              content: Text("SignIN Failed. Please Try again after some time"),
+              actions: [
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+
+                  },
+                ),
+              ],
+            );
+          },
         );
+        // DialogContext().showSnackBar(
+        //     snackBar: SnackBar(content: Text('SignIn Failed'))
+        // );
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        DialogContext().showSnackBar(
-            snackBar: SnackBar(content: Text('No user found for that email'))
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("No User"),
+              content: Text("No user found for that email"),
+              actions: [
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+
+                  },
+                ),
+              ],
+            );
+          },
         );
+        // DialogContext().showSnackBar(
+        //     snackBar: SnackBar(content: Text('No user found for that email'))
+        // );
         //print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        DialogContext().showSnackBar(
-            snackBar: SnackBar(content: Text('Wrong password provided for that user'))
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Wrong Password"),
+              content: Text("Wrong password provided for that user'"),
+              actions: [
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+
+                  },
+                ),
+              ],
+            );
+          },
         );
+        // DialogContext().showSnackBar(
+        //     snackBar: SnackBar(content: Text('Wrong password provided for that user'))
+        // );
         //print('Wrong password provided for that user.');
       }
     }

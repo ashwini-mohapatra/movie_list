@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_list/screens/Home.dart';
 import 'package:movie_list/screens/Login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Register extends StatefulWidget{
   @override
@@ -17,6 +18,17 @@ class _Register extends State<Register>{
   TextEditingController t1=TextEditingController();
   TextEditingController t2=TextEditingController();
   late var name,password;
+  late var uid;
+
+  void storeUID(id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('uid', id);
+  }
+
+  void getUID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    uid=prefs.getString('uid');
+  }
 
   register(name,pass) async{
     try {
@@ -25,25 +37,77 @@ class _Register extends State<Register>{
           password: pass
       );
       if(userCredential==true){
+        storeUID(userCredential.user?.uid);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Home()),
         );
       }else{
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Wrong Password"),
+              content: Text("Wrong password provided for that user'"),
+              actions: [
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+
+                  },
+                ),
+              ],
+            );
+          },
+        );
         DialogContext().showSnackBar(
             snackBar: SnackBar(content: Text('Register Failure'))
         );
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        DialogContext().showSnackBar(
-            snackBar: SnackBar(content: Text('The password provided is too weak'))
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Weak Password"),
+              content: Text("The password provided is too weak"),
+              actions: [
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+
+                  },
+                ),
+              ],
+            );
+          },
         );
+        // DialogContext().showSnackBar(
+        //     snackBar: SnackBar(content: Text('The password provided is too weak'))
+        // );
         //print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
-        DialogContext().showSnackBar(
-            snackBar: SnackBar(content: Text('The account already exists for that email'))
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Account Exists"),
+              content: Text("The account already exists for that email'"),
+              actions: [
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+
+                  },
+                ),
+              ],
+            );
+          },
         );
+        // DialogContext().showSnackBar(
+        //     snackBar: SnackBar(content: Text('The account already exists for that email'))
+        // );
         //print('The account already exists for that email.');
       }
     } catch (e) {
