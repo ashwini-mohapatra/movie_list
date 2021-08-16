@@ -1,4 +1,3 @@
-import 'package:dialog_context/dialog_context.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,9 +27,10 @@ class _Landing extends State<Landing>{
     await prefs.setString('uid', id);
   }
 
-  void getUID() async {
+  getUID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    uid=prefs.getString('uid');
+    final id=prefs.getString('uid');
+    return id;
   }
 
   // Define an async function to initialize FlutterFire
@@ -59,10 +59,23 @@ class _Landing extends State<Landing>{
   Widget build(BuildContext context) {
     // Show error message if initialization failed
     if(_error) {
-      DialogContext().showDialog(builder: (context)=>AlertDialog(
-          title: new Text("Initialization Error"),
-          content: new Text("Error while Initializing Firebase. Try again later")
-      ));
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Initializaion Error"),
+            content: Text("Error While Initializing Firebase. Please Try Again Later"),
+            actions: [
+              TextButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
 
     // return new MaterialApp(
@@ -78,21 +91,24 @@ class _Landing extends State<Landing>{
       return CircularProgressIndicator();
     }
     var f=0;
-    FirebaseAuth.instance
-        .authStateChanges()
-        .listen((User? user) {
-      if (user == null) {
-        f=0;
-        getUID();
-        if(uid==''){
+    uid=getUID();
+    if(uid==""){
+      FirebaseAuth.instance
+          .authStateChanges()
+          .listen((User? user) {
+        if (user == null) {
           f=0;
+          Navigator.of(context).push(new MaterialPageRoute(builder: (context)=> Login()));
+        } else {
+          f=1;
+          uid=user.uid;
+          storeUID(uid);
+          Navigator.of(context).push(new MaterialPageRoute(builder: (context)=> Home()));
         }
-      } else {
-        f=1;
-        uid=user.uid;
-        storeUID(uid);
-      }
-    });
+      });
+    }else{
+      Navigator.of(context).push(new MaterialPageRoute(builder: (context)=> Home()));
+    }
     return (f==0)?Login():Home();
   }
 }

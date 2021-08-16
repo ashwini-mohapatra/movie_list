@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dialog_context/dialog_context.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +9,7 @@ import 'package:movie_list/models/Movie.dart';
 import 'package:movie_list/movie_list.dart';
 import 'package:movie_list/services/Uploadservice.dart';
 import 'package:movie_list/services/Utility.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget{
   @override
@@ -50,6 +50,12 @@ class _Home extends State<Home>{
   @override
   void dispose() {
     super.dispose();
+  }
+
+  getUID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var id=prefs.getString('uid');
+    return (uid=='')?"":uid;
   }
 
   imageconv(_imageFileLists) async{
@@ -206,12 +212,40 @@ class _Home extends State<Home>{
                 Navigator.of(dialogContext).pop(); // Dismiss alert dialog
                 getMovies();
                 if(result>0){
-                  DialogContext().showSnackBar(
-                      snackBar: SnackBar(content: Text('Success'))
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Success"),
+                        content: Text("Successful"),
+                        actions: [
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
                 }else{
-                  DialogContext().showSnackBar(
-                      snackBar: SnackBar(content: Text('Failure'))
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Failure"),
+                        content: Text("Failed"),
+                        actions: [
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
                 }
               },
@@ -292,12 +326,40 @@ class _Home extends State<Home>{
                 getMovies();
                 if(result>0){
                   getMovies();
-                  DialogContext().showSnackBar(
-                      snackBar: SnackBar(content: Text('Success'))
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Success"),
+                        content: Text("Successful"),
+                        actions: [
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
                 }else{
-                  DialogContext().showSnackBar(
-                      snackBar: SnackBar(content: Text('Failure'))
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Failure"),
+                        content: Text("Failed"),
+                        actions: [
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
                 }
               },
@@ -368,12 +430,40 @@ class _Home extends State<Home>{
                 Navigator.of(dialogContext).pop(); // Dismiss alert dialog
                 getMovies();
                 if(result>0){
-                  DialogContext().showSnackBar(
-                      snackBar: SnackBar(content: Text('Success'))
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Success"),
+                        content: Text("Successful"),
+                        actions: [
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
                 }else{
-                  DialogContext().showSnackBar(
-                      snackBar: SnackBar(content: Text('Failure'))
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Failure"),
+                        content: Text("Failed"),
+                        actions: [
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
                 }
               },

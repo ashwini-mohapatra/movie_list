@@ -27,12 +27,12 @@ dependencies:
   shared_preferences: ^2.0.6
   image_picker: ^0.8.3+2
   path_provider: ^2.0.2
-  dialog_context: ^0.1.1
+  #dialog_context: ^0.1.1
   firebase_core: ^1.4.0
   firebase_auth: ^3.0.1
   firebase_analytics: ^8.2.0
   #awesome_loader: ^0.0.3
-  google_sign_in: ^4.5.1
+  google_sign_in: ^5.0.7
   font_awesome_flutter: ^9.0.0
   provider: ^5.0.0
   # The following adds the Cupertino Icons font to your application.

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_list/screens/Home.dart';
 import 'package:movie_list/screens/Login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerNavigation extends StatefulWidget{
   @override
@@ -15,23 +16,31 @@ class DrawerNavigation extends StatefulWidget{
 class _DrawerNavigation extends State<DrawerNavigation>{
 
   late var uid;
-  void getUID(){
 
+  getUID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var id=prefs.getString('uid');
+    return (uid=='')?"":uid;
   }
-
+  void storeUID(id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('uid', id);
+  }
   void _logout(){
+    storeUID("");
     Navigator.of(context).push(new MaterialPageRoute(builder: (context)=> Login()));
   }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    uid=getUID();
     return Container(
       child: Drawer(
         child: ListView(
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text("UID"),
-              accountEmail: Text(uid),
+              accountName: Text(""),
+              accountEmail: Text(""),
               currentAccountPicture: GestureDetector(
                 child: CircleAvatar(
                   child: Image.asset('assets/images/d1.png'),
@@ -49,8 +58,8 @@ class _DrawerNavigation extends State<DrawerNavigation>{
               leading: Icon(Icons.home),
               onTap: (){
                 Navigator.of(context).pop();
-                Home();
-                //Navigator.of(context).push(new MaterialPageRoute(builder: (context)=> Home()));
+                //Home();
+                Navigator.of(context).push(new MaterialPageRoute(builder: (context)=> Home()));
               },
             ),
             ListTile(
@@ -58,8 +67,8 @@ class _DrawerNavigation extends State<DrawerNavigation>{
               leading: Icon(Icons.login),
               onTap: (){
                 Navigator.of(context).pop();
-                Login();
-                //_logout();
+                //Login();
+                _logout();
                 },
             ),
           ],

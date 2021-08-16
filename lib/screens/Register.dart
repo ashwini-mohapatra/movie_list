@@ -1,4 +1,3 @@
-import 'package:dialog_context/dialog_context.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +35,7 @@ class _Register extends State<Register>{
           email: name,
           password: pass
       );
-      if(userCredential==true){
+      if(userCredential.user?.uid!=null){
         storeUID(userCredential.user?.uid);
         Navigator.push(
           context,
@@ -47,22 +46,22 @@ class _Register extends State<Register>{
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Wrong Password"),
-              content: Text("Wrong password provided for that user'"),
+              title: Text("Register Failure"),
+              content: Text("Register Failure. Please Try Again Later"),
               actions: [
                 TextButton(
                   child: Text("OK"),
                   onPressed: () {
-
+                    Navigator.of(context).pop();
                   },
                 ),
               ],
             );
           },
         );
-        DialogContext().showSnackBar(
-            snackBar: SnackBar(content: Text('Register Failure'))
-        );
+        // DialogContext().showSnackBar(
+        //     snackBar: SnackBar(content: Text('Register Failure'))
+        // );
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -76,7 +75,7 @@ class _Register extends State<Register>{
                 TextButton(
                   child: Text("OK"),
                   onPressed: () {
-
+                    Navigator.of(context).pop();
                   },
                 ),
               ],
@@ -98,7 +97,7 @@ class _Register extends State<Register>{
                 TextButton(
                   child: Text("OK"),
                   onPressed: () {
-
+                    Navigator.of(context).pop();
                   },
                 ),
               ],
@@ -160,6 +159,9 @@ class _Register extends State<Register>{
                         Container(height: 25),
                         TextField(
                           controller: t2,
+                          obscureText: true,
+                          autocorrect: false,
+                          enableSuggestions: false,
                           keyboardType: TextInputType.text,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(labelText: "Password",

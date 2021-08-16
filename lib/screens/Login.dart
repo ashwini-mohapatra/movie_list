@@ -1,4 +1,3 @@
-import 'package:dialog_context/dialog_context.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movie_list/screens/Home.dart';
 import 'package:movie_list/screens/Register.dart';
-import 'package:movie_list/services/GoogleSignInProvider.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Landing.dart';
@@ -27,6 +24,8 @@ class _Login extends State<Login>{
   TextEditingController t1=TextEditingController();
   TextEditingController t2=TextEditingController();
   late var uid;
+  GoogleSignInAccount? _user;
+  GoogleSignInAccount get user => _user!;
 
   void storeUID(id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -44,7 +43,7 @@ class _Login extends State<Login>{
           email: name,
           password: pass
       );
-      if(userCredential==true){
+      if(userCredential.user?.uid!=null){
         storeUID(userCredential.user?.uid);
         Navigator.push(
           context,
@@ -63,7 +62,7 @@ class _Login extends State<Login>{
                 TextButton(
                   child: Text("OK"),
                   onPressed: () {
-
+                    Navigator.of(context).pop();
                   },
                 ),
               ],
@@ -86,7 +85,7 @@ class _Login extends State<Login>{
                 TextButton(
                   child: Text("OK"),
                   onPressed: () {
-
+                    Navigator.of(context).pop();
                   },
                 ),
               ],
@@ -108,7 +107,7 @@ class _Login extends State<Login>{
                 TextButton(
                   child: Text("OK"),
                   onPressed: () {
-
+                    Navigator.of(context).pop();
                   },
                 ),
               ],
@@ -120,6 +119,31 @@ class _Login extends State<Login>{
         // );
         //print('Wrong password provided for that user.');
       }
+    }
+  }
+
+  signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if(googleUser == null) return;
+    _user=googleUser;
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    final abcd=await FirebaseAuth.instance.signInWithCredential(credential);
+
+    if(abcd.user?.uid!=null){
+      return abcd.user?.uid;
+    }else{
+      return "";
     }
   }
 
@@ -169,6 +193,9 @@ class _Login extends State<Login>{
                         TextField(
                           controller: t2,
                           keyboardType: TextInputType.text,
+                          obscureText: true,
+                          autocorrect: false,
+                          enableSuggestions: false,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(labelText: "Password",
                             labelStyle: TextStyle(color: Colors.blueGrey[400]),
@@ -224,9 +251,9 @@ class _Login extends State<Login>{
                             ),
                             icon: FaIcon(FontAwesomeIcons.google),
                             onPressed: () {
-                              var provider=Provider.of<GoogleSignInProvider>(context,listen: false);
-                              provider.signInWithGoogle();
-                            },
+                              var ab=signInWithGoogle();
+                              storeUID(ab);
+                              },
                             label: Text('Signin with Google'),
                           ),
                         ),
